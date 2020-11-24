@@ -5,7 +5,7 @@ dataset = ["", "Cesar", "Vini Correa", "Esdras", "Gustavo", "Vini Martins"]
 def detect_faces(img) :
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faceCasc = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-    faces = faceCasc.detectMultiScale(gray, 1.3, 5)
+    faces = faceCasc.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=3, minSize=(20,20))
     graylist = []
     faceslist = []
 
@@ -22,7 +22,7 @@ def detect_faces(img) :
 def detect_face(img) :
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faceCasc = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-    faces = faceCasc.detectMultiScale(gray, 1.3, 5)
+    faces = faceCasc.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=3, minSize=(20,20))
     graylist = []
     faceslist = []
 
@@ -71,7 +71,7 @@ def predict(img) :
     if face is not None :
         for i in range(0, len(face)) :
             label, confidence = face_recognizer.predict(face[i])
-            print(confidence)
+            print(dataset[label]+ " | Loss: "+ (str(confidence)))
             if confidence < 100:
                 label_text = dataset[label]
                 color = (0, 255, 0);
@@ -102,10 +102,9 @@ def predict(img) :
                 cv2.putText(img, (label_text + "{:10.2f}".format((100-confidence)) + "%"),pt3 , cv2.FONT_HERSHEY_PLAIN, 1.1, (0,0,255))  
 
     return img
-
 video_capture = cv2.VideoCapture(0)
 
-'''
+
 while True :
     ret, frame = video_capture.read()
 
@@ -115,7 +114,8 @@ while True :
     if cv2.waitKey(1) & 0xFF == ord('q') :
         break
 '''
-img = cv2.imread('Dataset/5/3.jpeg')
+img = cv2.imread('Test/eu_mamis.jpg')
 img = predict(img)
 cv2.imshow('Image', img)
 cv2.waitKey(0)
+'''
