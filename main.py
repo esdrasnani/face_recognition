@@ -1,8 +1,8 @@
 import cv2, os, numpy
 
-dataset = ["", "Cesar", "Vini Correa", "Esdras", "Gustavo", "Vini Martins"]
+dataset = ["Cesar", "Vini Correa", "Esdras", "Gustavo", "Vini Martins"]
 
-def detect_faces(img) :
+def detectaTodasFaces(img) :
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faceCasc = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
     faces = faceCasc.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=3, minSize=(20,20))
@@ -19,7 +19,7 @@ def detect_faces(img) :
 
     return graylist, faceslist
 
-def detect_face(img) :
+def detectaUnicaFace(img) :
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faceCasc = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
     faces = faceCasc.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=3, minSize=(20,20))
@@ -46,7 +46,7 @@ def data() :
         for j in os.listdir(set) :
             path = set + "/" + j
             img = cv2.imread(path)
-            face, rect = detect_face(img)
+            face, rect = detectaUnicaFace(img)
 
             if face is not None :
                 faces.append(face)
@@ -58,15 +58,9 @@ def data() :
 
     return faces, labels
 
-faces, labels = data()
-
-face_recognizer = cv2.face.LBPHFaceRecognizer_create()
-
-face_recognizer.train(faces, numpy.array(labels))
-
 def predict(img) :
 
-    face, rect = detect_faces(img)
+    face, rect = detectaTodasFaces(img)
 
     if face is not None :
         for i in range(0, len(face)) :
@@ -77,21 +71,13 @@ def predict(img) :
                 color = (0, 255, 0);
                 (x, y, w, h) = rect[i]
                 cv2.line(img, (x, y), (int(x + (w/5)),y), color, 2)
-                # line 2 : top right corner horizontal line 
                 cv2.line(img, (int(x+((w/5)*4)), y), (x+w, y), color, 2)
-                # line 3 : top left corner vertical line 
                 cv2.line(img, (x, y), (x,int(y+(h/5))), color, 2)
-                # line 4 : top right corner vertical line 
                 cv2.line(img, (x+w, y), (x+w, int(y+(h/5))), color, 2)
-                # line 5 : bottom left corner vertical line 
                 cv2.line(img, (x, int(y+(h/5*4))), (x, y+h), color, 2)
-                # line 6 : bottom left corner horizontal line 
                 cv2.line(img, (x, int(y+h)), (x + int(w/5) ,y+h), color,2)
-                # line 6 : bottom right corner horizontal line 
                 cv2.line(img,(x+int((w/5)*4),y+h),(x + w, y + h),color, 2)
-                # line 6 : bottom right corner verticals line 
                 cv2.line(img, (x+w, int(y+(h/5*4))), (x+w, y+h), color, 2)
-
 
                 pt1 = (int(x + w/2.0 -150), int(y+h+15))
                 pt2 = (int((x + w/2.0 +50)+90), int(y+h+40))    
@@ -102,6 +88,10 @@ def predict(img) :
                 cv2.putText(img, (label_text + "{:10.2f}".format((100-confidence)) + "%"),pt3 , cv2.FONT_HERSHEY_PLAIN, 1.1, (0,0,255))  
 
     return img
+
+faces, labels = data()
+face_recognizer = cv2.face.LBPHFaceRecognizer_create()
+face_recognizer.train(faces, numpy.array(labels))
 video_capture = cv2.VideoCapture(0)
 
 
@@ -114,7 +104,7 @@ while True :
     if cv2.waitKey(1) & 0xFF == ord('q') :
         break
 '''
-img = cv2.imread('Test/eu_mamis.jpg')
+img = cv2.imread('Test/cesar.jpeg')
 img = predict(img)
 cv2.imshow('Image', img)
 cv2.waitKey(0)
