@@ -1,6 +1,6 @@
 import cv2, os, numpy
 
-dataset = ["Cesar", "Vini Correa", "Esdras", "Gustavo", "Vini Martins"]
+dataset = ["Cesar", "Esdras", "Vini Correa", "Gustavo", "Vini Martins"]
 
 def detectaTodasFaces(img) :
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -104,7 +104,7 @@ while True :
     if cv2.waitKey(1) & 0xFF == ord('q') :
         break
 '''
-img = cv2.imread('Test/cesar.jpeg')
+img = cv2.imread('Test/esdras.jpg')
 img = predict(img)
 cv2.imshow('Image', img)
 cv2.waitKey(0)
